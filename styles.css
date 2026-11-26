@@ -728,7 +728,39 @@ body {
   font-weight: 600;
   color: #0f172a;
   margin-bottom: 1.35rem;
-  line-height: 1.65;
+  line-height: 1.75;
+}
+
+.blank-line {
+  display: inline-block;
+  min-width: 72px;
+  border-bottom: 2.5px solid var(--primary);
+  color: var(--primary);
+  font-weight: 800;
+  text-align: center;
+  padding: 0 0.35rem;
+  margin: 0 0.2rem;
+  background: var(--primary-light);
+  border-radius: 4px 4px 0 0;
+  line-height: 1.35;
+}
+
+.word-blank-hint {
+  display: inline-block;
+  color: #1d4ed8;
+  background: #eff6ff;
+  padding: 0.05rem 0.4rem;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.word-blank-line {
+  display: inline-block;
+  min-width: 44px;
+  border-bottom: 2.5px solid #2563eb;
+  margin: 0 2px;
+  color: transparent;
+  user-select: none;
 }
 
 .options-grid {

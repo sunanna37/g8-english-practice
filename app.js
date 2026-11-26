@@ -367,7 +367,7 @@
     }
 
     // Question stem
-    document.getElementById('q-stem-text').textContent = `${idx + 1}. ${q.question}`;
+    document.getElementById('q-stem-text').innerHTML = `${idx + 1}. ${formatStemHtml(q.question)}`;
 
     // Options vs Fill-in
     const optionsBox = document.getElementById('q-options-box');
@@ -643,7 +643,7 @@
           ${removeBtnHtml}
         </div>
         ${passageHtml}
-        <div class="review-item-stem">${numLabel ? numLabel + '. ' : ''}${escapeHtml(q.question)}</div>
+        <div class="review-item-stem">${numLabel ? numLabel + '. ' : ''}${formatStemHtml(q.question)}</div>
         ${optionsHtml}
         <div class="review-item-exp">${escapeHtml(q.explanation || '正解：' + formatCorrectAnswer(q))}</div>
       </div>
@@ -734,6 +734,17 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function formatStemHtml(str) {
+    const escaped = escapeHtml(str);
+    return escaped
+      // Cloze blank in stem like ___(1)___
+      .replace(/___\((\d+)\)___/g, '<span class="cloze-blank active-blank">____($1)____</span>')
+      // Word fill-in-the-blank like d_____y or a_____
+      .replace(/\b([A-Za-z]+)_____([A-Za-z]*)/g, '<span class="word-blank-hint">$1<span class="word-blank-line">____</span>$2</span>')
+      // Standard standalone blank _____
+      .replace(/_____/g, '<span class="blank-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
   }
 
   // Event Listeners Setup
