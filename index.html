@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>國二英文互動練習站 | U3・U4・Review 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand" id="nav-home" role="button" tabindex="0">
+        <div class="brand-icon">EN</div>
+        <div class="brand-text">
+          <h1>國二英文互動練習站</h1>
+          <span class="subtitle">Unit 3・Unit 4・Review 2 混合題庫</span>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <button class="nav-btn active" id="tab-dashboard" data-view="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>練習首頁</span>
+        </button>
+        <button class="nav-btn" id="tab-mistakes" data-view="mistakes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>錯題專區</span>
+          <span class="badge-count" id="nav-mistake-count">0</span>
+        </button>
+        <button class="nav-btn" id="tab-bank" data-view="bank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>題庫總覽</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- VIEW 1: DASHBOARD -->
+    <section id="view-dashboard" class="view-section active">
+      <div class="hero-card">
+        <div class="hero-content">
+          <div class="hero-tags">
+            <span class="unit-pill u3">Unit 3</span>
+            <span class="unit-pill u4">Unit 4</span>
+            <span class="unit-pill r2">Review 2</span>
+            <span class="unit-pill neutral">智能不重複抽題</span>
+          </div>
+          <h2>準備好開始本回的混合練習了嗎？</h2>
+          <p class="hero-desc">
+            系統會從 <strong>U3、U4、Review 2</strong> 共 <span id="stat-total-bank">442</span> 題中混合抽選約 <strong>40 題</strong>（克漏字題組會完整連號出題）。每做完一題立即批改並顯示詳解！已做過的題目不會重複出現，直到題庫全部練完才會進入下一輪。
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" id="btn-start-mixed">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>開始新一回混合練習（約 40 題）</span>
+            </button>
+            <button class="btn btn-warning btn-lg" id="btn-quick-mistakes" style="display: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              <span>複習我的錯題 (<span id="hero-mistake-count">0</span> 題)</span>
+            </button>
+          </div>
+        </div>
+        <div class="hero-progress-box">
+          <div class="progress-ring-header">
+            <span>第 <strong id="stat-cycle-num">1</strong> 輪題庫完成度</span>
+            <span class="pct-label" id="stat-progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="stat-progress-bar" style="width: 0%"></div>
+          </div>
+          <div class="progress-numbers">
+            <div>
+              <span class="num-label">已練習不重複題數</span>
+              <strong id="stat-seen-count">0</strong> / <span id="stat-total-count">442</span>
+            </div>
+            <div>
+              <span class="num-label">剩餘未出題數</span>
+              <strong id="stat-remaining-count">442</strong> 題
+            </div>
+          </div>
+          <div class="progress-actions">
+            <button class="btn-link" id="btn-reset-cycle" title="將已出題紀錄歸零，重新計算不重複抽題">重置本輪出題紀錄</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-title">已完成回數</span>
+            <strong class="stat-value" id="stat-rounds-done">0</strong>
+            <span class="stat-sub">每回約 40 題</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-title">累積答對率</span>
+            <strong class="stat-value" id="stat-accuracy">--%</strong>
+            <span class="stat-sub" id="stat-answered-detail">累積作答 0 題</span>
+          </div>
+        </div>
+
+        <div class="stat-card clickable" id="card-goto-mistakes">
+          <div class="stat-icon red">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-title">待複習錯題</span>
+            <strong class="stat-value" id="stat-mistake-total">0</strong>
+            <span class="stat-sub">點擊前往錯題區練習 &rarr;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Practice & Recent Rounds -->
+      <div class="dashboard-columns">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>自訂練習設定</h3>
+            <span class="panel-badge">彈性選擇範圍與題型</span>
+          </div>
+          <div class="custom-options">
+            <div class="form-group">
+              <label>出題範圍（可複選）</label>
+              <div class="checkbox-pills">
+                <label class="pill-check">
+                  <input type="checkbox" name="unit-filter" value="U3" checked />
+                  <span>Unit 3 (226題)</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="unit-filter" value="U4" checked />
+                  <span>Unit 4 (208題)</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="unit-filter" value="Review2" checked />
+                  <span>Review 2 (8題)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>包含題型（可複選）</label>
+              <div class="checkbox-pills">
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="字彙選擇" checked />
+                  <span>字彙選擇</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="文法選擇" checked />
+                  <span>文法選擇</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="對話與完成句子" checked />
+                  <span>對話與完成句子</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="克漏字測驗" checked />
+                  <span>克漏字測驗</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="文意字彙" checked />
+                  <span>文意字彙(填空)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>每回目標題數</label>
+              <div class="radio-pills">
+                <label class="pill-radio">
+                  <input type="radio" name="target-count" value="20" />
+                  <span>20 題 (快速)</span>
+                </label>
+                <label class="pill-radio">
+                  <input type="radio" name="target-count" value="40" checked />
+                  <span>40 題 (標準推薦)</span>
+                </label>
+                <label class="pill-radio">
+                  <input type="radio" name="target-count" value="50" />
+                  <span>50 題 (挑戰)</span>
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-secondary btn-full" id="btn-start-custom">
+              依照上方設定開始練習
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>最近練習紀錄</h3>
+            <button class="btn-link" id="btn-clear-history">清除紀錄</button>
+          </div>
+          <div id="recent-history-list" class="history-list">
+            <div class="empty-state-sm">尚無練習紀錄，點擊上方「開始新一回混合練習」開始吧！</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: QUIZ ARENA -->
+    <section id="view-quiz" class="view-section">
+      <div class="quiz-topbar">
+        <div class="quiz-meta-left">
+          <button class="btn btn-ghost btn-sm" id="btn-quit-quiz">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>結束本回</span>
+          </button>
+          <span class="quiz-mode-badge" id="quiz-mode-title">第 1 回混合練習</span>
+        </div>
+        <div class="quiz-score-live">
+          <span class="score-pill correct">✓ 答對 <strong id="live-correct">0</strong></span>
+          <span class="score-pill wrong">✗ 答錯 <strong id="live-wrong">0</strong></span>
+        </div>
+      </div>
+
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-info">
+          <span>進度：<strong id="quiz-curr-idx">1</strong> / <span id="quiz-total-idx">40</span> 題</span>
+          <span id="quiz-pct-text">2%</span>
+        </div>
+        <div class="progress-bar-track sm">
+          <div class="progress-bar-fill" id="quiz-progress-bar" style="width: 2%"></div>
+        </div>
+        <!-- Question Number Dots Navigator -->
+        <div class="question-dots" id="quiz-dots-nav"></div>
+      </div>
+
+      <div class="question-card" id="question-card">
+        <div class="q-header-tags">
+          <span class="unit-pill" id="q-unit-badge">Unit 3</span>
+          <span class="cat-pill" id="q-cat-badge">文法選擇</span>
+          <span class="q-id-tag" id="q-id-badge">#U3-Q001</span>
+        </div>
+
+        <!-- Optional Cloze Passage -->
+        <div class="cloze-passage-box" id="q-passage-box" style="display: none;">
+          <div class="cloze-title">📖 克漏字閱讀文章 <span id="q-cloze-group-info"></span></div>
+          <div class="cloze-content" id="q-passage-text"></div>
+        </div>
+
+        <!-- Optional Image -->
+        <div class="q-image-box" id="q-image-box" style="display: none;">
+          <img id="q-image" src="" alt="題目附圖" />
+        </div>
+
+        <!-- Question Stem -->
+        <div class="q-stem" id="q-stem-text"></div>
+
+        <!-- Answer Area: Multiple Choice -->
+        <div class="options-grid" id="q-options-box"></div>
+
+        <!-- Answer Area: Fill-in-the-blank (文意字彙) -->
+        <div class="fill-input-box" id="q-fill-box" style="display: none;">
+          <div class="fill-hint">💡 提示：請輸入完整英文單字（包含題目已給的字首與字尾字母，若為兩個單字請用空格隔開）</div>
+          <div class="fill-controls">
+            <input type="text" id="fill-answer-input" class="fill-input" placeholder="請輸入完整英文單字，按 Enter 送出..." autocomplete="off" spellcheck="false" />
+            <button class="btn btn-primary" id="btn-submit-fill">送出答案</button>
+          </div>
+        </div>
+
+        <!-- Instant Feedback Panel -->
+        <div class="feedback-panel" id="q-feedback-panel" style="display: none;">
+          <div class="feedback-banner" id="feedback-banner">
+            <div class="feedback-icon" id="feedback-icon">✓</div>
+            <div class="feedback-title-wrap">
+              <h4 id="feedback-title">答對了！太棒了！</h4>
+              <p id="feedback-correct-ans"></p>
+            </div>
+          </div>
+          <div class="feedback-explanation" id="feedback-explanation"></div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="q-footer-nav">
+          <button class="btn btn-ghost" id="btn-prev-q">
+            &larr; 上一題
+          </button>
+          <div class="footer-right-btns">
+            <button class="btn btn-primary btn-lg" id="btn-next-q" style="display: none;">
+              <span>下一題 &rarr;</span>
+            </button>
+            <button class="btn btn-success btn-lg" id="btn-finish-quiz" style="display: none;">
+              <span>查看本回成績單 🎉</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: QUIZ SUMMARY -->
+    <section id="view-summary" class="view-section">
+      <div class="summary-card">
+        <div class="summary-header">
+          <div class="summary-trophy" id="summary-trophy">🏆</div>
+          <h2 id="summary-title">本回練習完成！</h2>
+          <p id="summary-subtitle">做得好！持續練習能讓文法與單字記憶更牢固。</p>
+        </div>
+
+        <div class="summary-score-grid">
+          <div class="sum-stat">
+            <span>本回得分率</span>
+            <strong id="sum-score-pct" class="highlight-blue">90%</strong>
+          </div>
+          <div class="sum-stat">
+            <span>答對題數</span>
+            <strong id="sum-correct-cnt" class="highlight-green">36</strong>
+          </div>
+          <div class="sum-stat">
+            <span>答錯題數</span>
+            <strong id="sum-wrong-cnt" class="highlight-red">4</strong>
+          </div>
+          <div class="sum-stat">
+            <span>總題數</span>
+            <strong id="sum-total-cnt">40</strong>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-primary btn-lg" id="btn-sum-next-round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>繼續下一回不重複練習</span>
+          </button>
+          <button class="btn btn-warning btn-lg" id="btn-sum-review-wrong" style="display: none;">
+            <span>立即重練本回錯題</span>
+          </button>
+          <button class="btn btn-secondary btn-lg" id="btn-sum-home">
+            <span>返回練習首頁</span>
+          </button>
+        </div>
+
+        <div class="summary-review-section">
+          <h3>本回題目與詳解回顧</h3>
+          <div id="summary-questions-list" class="review-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: MISTAKES ZONE (錯題專區) -->
+    <section id="view-mistakes" class="view-section">
+      <div class="mistakes-header-card">
+        <div>
+          <h2>🎯 錯題複習專區</h2>
+          <p>所有曾經答錯的題目都會自動收錄在這裡。你可以在此檢視詳解，或直接啟動「錯題重練測驗」，答對後即可將題目從錯題區移除！</p>
+        </div>
+        <div class="mistakes-header-actions">
+          <button class="btn btn-warning btn-lg" id="btn-practice-all-mistakes">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>開始錯題重練（最多 40 題）</span>
+          </button>
+          <button class="btn btn-ghost" id="btn-clear-all-mistakes">清空全部錯題</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>單元篩選：</label>
+          <select id="mistake-filter-unit" class="select-input">
+            <option value="ALL">全部單元</option>
+            <option value="U3">Unit 3</option>
+            <option value="U4">Unit 4</option>
+            <option value="Review2">Review 2</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>題型篩選：</label>
+          <select id="mistake-filter-cat" class="select-input">
+            <option value="ALL">全部題型</option>
+            <option value="字彙選擇">字彙選擇</option>
+            <option value="文法選擇">文法選擇</option>
+            <option value="對話與完成句子">對話與完成句子</option>
+            <option value="克漏字測驗">克漏字測驗</option>
+            <option value="文意字彙">文意字彙</option>
+          </select>
+        </div>
+        <label class="toggle-check">
+          <input type="checkbox" id="chk-auto-remove-mistake" checked />
+          <span>錯題重練答對時，自動從錯題區移除</span>
+        </label>
+      </div>
+
+      <div id="mistakes-list-container" class="review-list"></div>
+    </section>
+
+    <!-- VIEW 5: QUESTION BANK BROWSER (題庫總覽) -->
+    <section id="view-bank" class="view-section">
+      <div class="mistakes-header-card">
+        <div>
+          <h2>📚 題庫總覽與搜尋</h2>
+          <p>收錄國二英文 Unit 3 (226題)、Unit 4 (208題) 與 Review 2 (8題) 共 442 題完整題目與詳解。</p>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>單元：</label>
+          <select id="bank-filter-unit" class="select-input">
+            <option value="ALL">全部單元 (442)</option>
+            <option value="U3">Unit 3 (226)</option>
+            <option value="U4">Unit 4 (208)</option>
+            <option value="Review2">Review 2 (8)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>題型：</label>
+          <select id="bank-filter-cat" class="select-input">
+            <option value="ALL">全部題型</option>
+            <option value="字彙選擇">字彙選擇</option>
+            <option value="文法選擇">文法選擇</option>
+            <option value="對話與完成句子">對話與完成句子</option>
+            <option value="克漏字測驗">克漏字測驗</option>
+            <option value="文意字彙">文意字彙</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>狀態：</label>
+          <select id="bank-filter-status" class="select-input">
+            <option value="ALL">全部狀態</option>
+            <option value="UNSEEN">本輪尚未出題</option>
+            <option value="SEEN">本輪已練習過</option>
+          </select>
+        </div>
+        <div class="filter-group search-grow">
+          <input type="search" id="bank-search-input" class="search-input" placeholder="搜尋題目關鍵字、單字或解析..." />
+        </div>
+      </div>
+
+      <div id="bank-list-container" class="review-list"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>國二英文互動練習系統 ・ 支援即時批改、不重複隨機抽題與錯題本自動追蹤</p>
+  </footer>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
