@@ -179,6 +179,8 @@ body {
 .unit-pill.u3 { background: var(--u3-bg); color: var(--u3-color); }
 .unit-pill.u4 { background: var(--u4-bg); color: var(--u4-color); }
 .unit-pill.r2 { background: var(--r2-bg); color: var(--r2-color); }
+.unit-pill.kh1 { background: #fef3c7; color: #b45309; }
+.unit-pill.kh2 { background: #fce7f3; color: #be185d; }
 .unit-pill.neutral { background: #e2e8f0; color: #334155; }
 .cat-pill { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 

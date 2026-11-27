@@ -133,56 +133,41 @@
   }
 
   function pickBalancedBlocks(pool, targetCount) {
-    // Group by unit so U3, U4, Review2 are all well-represented
-    const byUnit = {
-      Review2: pool.filter((q) => q.unit === 'Review2'),
-      U3: pool.filter((q) => q.unit === 'U3'),
-      U4: pool.filter((q) => q.unit === 'U4')
-    };
+    // Group dynamically by whatever units exist in the pool so all selected units are balanced
+    const unitGroups = new Map();
+    for (const q of pool) {
+      if (!unitGroups.has(q.unit)) unitGroups.set(q.unit, []);
+      unitGroups.get(q.unit).push(q);
+    }
 
-    const blocksR2 = shuffleArray(buildAtomicBlocks(byUnit.Review2));
-    const blocksU3 = shuffleArray(buildAtomicBlocks(byUnit.U3));
-    const blocksU4 = shuffleArray(buildAtomicBlocks(byUnit.U4));
+    const unitBlockQueues = [];
+    for (const [unit, qs] of unitGroups.entries()) {
+      const blocks = shuffleArray(buildAtomicBlocks(qs));
+      if (blocks.length > 0) {
+        unitBlockQueues.push({ unit, blocks });
+      }
+    }
+
+    // Sort queues with smallest pool first (e.g. Review2) so small units get at least 1 block represented
+    unitBlockQueues.sort((a, b) => a.blocks.length - b.blocks.length);
 
     const chosenBlocks = [];
     let count = 0;
+    let qIdx = 0;
 
-    // 1. Include 1 block from Review 2 if available (so Review 2 is mixed in)
-    if (blocksR2.length > 0 && count < targetCount) {
-      const b = blocksR2.pop();
-      chosenBlocks.push(b);
-      count += b.length;
-    }
+    while (count < targetCount && unitBlockQueues.some((uq) => uq.blocks.length > 0)) {
+      const activeQueues = unitBlockQueues.filter((uq) => uq.blocks.length > 0);
+      if (activeQueues.length === 0) break;
+      const currentQueue = activeQueues[qIdx % activeQueues.length];
+      qIdx++;
 
-    // 2. Alternate pulling from U3 and U4 (and remaining R2) to keep U3/U4 balanced
-    let turn = Math.random() < 0.5 ? 'U3' : 'U4';
-    while (count < targetCount && (blocksU3.length > 0 || blocksU4.length > 0 || blocksR2.length > 0)) {
-      let source = null;
-      if (turn === 'U3' && blocksU3.length > 0) {
-        source = blocksU3;
-        turn = 'U4';
-      } else if (turn === 'U4' && blocksU4.length > 0) {
-        source = blocksU4;
-        turn = 'U3';
-      } else if (blocksU3.length > 0) {
-        source = blocksU3;
-      } else if (blocksU4.length > 0) {
-        source = blocksU4;
-      } else if (blocksR2.length > 0) {
-        source = blocksR2;
-      }
-
-      if (!source || source.length === 0) break;
-
-      // Find a block that fits nicely (allow +2 slack for cloze group, or exact fit)
-      const b = source.pop();
+      const b = currentQueue.blocks.pop();
       if (count + b.length <= targetCount + 2 || count < targetCount - 1) {
         chosenBlocks.push(b);
         count += b.length;
       }
     }
 
-    // Shuffle the order of blocks so categories/units are interleaved, while keeping each cloze group contiguous
     const finalBlocks = shuffleArray(chosenBlocks);
     return finalBlocks.flat();
   }
@@ -192,6 +177,8 @@
     if (unit === 'U3') return 'unit-pill u3';
     if (unit === 'U4') return 'unit-pill u4';
     if (unit === 'Review2') return 'unit-pill r2';
+    if (unit === 'KH_01') return 'unit-pill kh1';
+    if (unit === 'KH_02') return 'unit-pill kh2';
     return 'unit-pill neutral';
   }
 
@@ -402,11 +389,19 @@
           });
         });
       }
-    } else if (q.type === 'fill') {
+    } else if (q.type === 'fill' || q.type === 'scramble') {
       optionsBox.style.display = 'none';
       fillBox.style.display = 'block';
+      const hintEl = fillBox.querySelector('.fill-hint');
       const inputEl = document.getElementById('fill-answer-input');
       const submitBtn = document.getElementById('btn-submit-fill');
+      if (q.type === 'scramble') {
+        hintEl.textContent = '💡 提示：請根據題目給的單字與標點符號，重組並輸入完整的英文句子：';
+        inputEl.placeholder = '請輸入重組後的完整英文句子，按 Enter 送出...';
+      } else {
+        hintEl.textContent = '💡 提示：請輸入完整英文單字（包含題目已給的字首與字尾字母，若為兩個單字請用空格隔開）：';
+        inputEl.placeholder = '請輸入完整英文單字，按 Enter 送出...';
+      }
       inputEl.value = resp ? resp.userAns : '';
       inputEl.disabled = !!resp;
       submitBtn.disabled = !!resp;
@@ -472,6 +467,8 @@
     return (str || '')
       .trim()
       .toLowerCase()
+      .replace(/[’']/g, "'")
+      .replace(/[.?!。？！]+$/g, '')
       .replace(/[；;,，]+/g, ' ')
       .replace(/\s+/g, ' ');
   }
@@ -756,16 +753,16 @@
     document.getElementById('nav-home').addEventListener('click', () => switchView('dashboard'));
     document.getElementById('card-goto-mistakes').addEventListener('click', () => switchView('mistakes'));
 
-    // Start Standard 40-question Mixed Quiz (U3 + U4 + Review2)
+    // Start Standard 40-question Mixed Quiz (All 5 units)
     function startStandardMixedQuiz() {
       const qs = sampleQuestions({
-        units: ['U3', 'U4', 'Review2'],
-        categories: ['字彙選擇', '文法選擇', '對話與完成句子', '克漏字測驗', '文意字彙'],
+        units: ['U3', 'U4', 'Review2', 'KH_01', 'KH_02'],
+        categories: ['字彙選擇', '文法選擇', '對話與完成句子', '克漏字測驗', '文意字彙', '句子重組'],
         targetCount: 40
       });
       startQuizSession({
         mode: 'mixed',
-        title: `第 ${appState.roundsDone + 1} 回 U3・U4・Review2 混合練習`,
+        title: `第 ${appState.roundsDone + 1} 回全範圍混合練習`,
         questions: qs
       });
     }

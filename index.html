@@ -16,7 +16,7 @@
         <div class="brand-icon">EN</div>
         <div class="brand-text">
           <h1>國二英文互動練習站</h1>
-          <span class="subtitle">Unit 3・Unit 4・Review 2 混合題庫</span>
+          <span class="subtitle">U3・U4・Review 2・康軒 01 (L3)・康軒 02 (L4) 混合題庫</span>
         </div>
       </div>
       <nav class="top-nav">
@@ -46,11 +46,13 @@
             <span class="unit-pill u3">Unit 3</span>
             <span class="unit-pill u4">Unit 4</span>
             <span class="unit-pill r2">Review 2</span>
+            <span class="unit-pill kh1">康軒 01 (L3)</span>
+            <span class="unit-pill kh2">康軒 02 (L4)</span>
             <span class="unit-pill neutral">智能不重複抽題</span>
           </div>
           <h2>準備好開始本回的混合練習了嗎？</h2>
           <p class="hero-desc">
-            系統會從 <strong>U3、U4、Review 2</strong> 共 <span id="stat-total-bank">442</span> 題中混合抽選約 <strong>40 題</strong>（克漏字題組會完整連號出題）。每做完一題立即批改並顯示詳解！已做過的題目不會重複出現，直到題庫全部練完才會進入下一輪。
+            系統會從 <strong>U3、U4、Review 2、康軒英語 01 & 02</strong> 共 <span id="stat-total-bank">882</span> 題中混合抽選約 <strong>40 題</strong>（克漏字題組會完整連號出題），您也可以在下方指定單一題庫練習。每做完一題立即批改並顯示詳解！已做過的題目不會重複出現，直到題庫全部練完才會進入下一輪。
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary btn-lg" id="btn-start-mixed">
@@ -132,7 +134,7 @@
           </div>
           <div class="custom-options">
             <div class="form-group">
-              <label>出題範圍（可複選）</label>
+              <label>出題範圍（可複選，或快速切換康軒／原題庫）</label>
               <div class="checkbox-pills">
                 <label class="pill-check">
                   <input type="checkbox" name="unit-filter" value="U3" checked />
@@ -145,6 +147,14 @@
                 <label class="pill-check">
                   <input type="checkbox" name="unit-filter" value="Review2" checked />
                   <span>Review 2 (8題)</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="unit-filter" value="KH_01" checked />
+                  <span>康軒英語 01 (209題)</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="unit-filter" value="KH_02" checked />
+                  <span>康軒英語 02 (231題)</span>
                 </label>
               </div>
             </div>
@@ -171,6 +181,10 @@
                 <label class="pill-check">
                   <input type="checkbox" name="cat-filter" value="文意字彙" checked />
                   <span>文意字彙(填空)</span>
+                </label>
+                <label class="pill-check">
+                  <input type="checkbox" name="cat-filter" value="句子重組" checked />
+                  <span>句子重組</span>
                 </label>
               </div>
             </div>
@@ -373,6 +387,8 @@
             <option value="U3">Unit 3</option>
             <option value="U4">Unit 4</option>
             <option value="Review2">Review 2</option>
+            <option value="KH_01">康軒英語 01 (L3)</option>
+            <option value="KH_02">康軒英語 02 (L4)</option>
           </select>
         </div>
         <div class="filter-group">
@@ -384,6 +400,7 @@
             <option value="對話與完成句子">對話與完成句子</option>
             <option value="克漏字測驗">克漏字測驗</option>
             <option value="文意字彙">文意字彙</option>
+            <option value="句子重組">句子重組</option>
           </select>
         </div>
         <label class="toggle-check">
@@ -400,7 +417,7 @@
       <div class="mistakes-header-card">
         <div>
           <h2>📚 題庫總覽與搜尋</h2>
-          <p>收錄國二英文 Unit 3 (226題)、Unit 4 (208題) 與 Review 2 (8題) 共 442 題完整題目與詳解。</p>
+          <p>收錄國二英文 Unit 3 (226題)、Unit 4 (208題)、Review 2 (8題)、康軒英語 01 (209題) 與 康軒英語 02 (231題) 共 882 題完整題目與詳解。</p>
         </div>
       </div>
 
@@ -408,10 +425,12 @@
         <div class="filter-group">
           <label>單元：</label>
           <select id="bank-filter-unit" class="select-input">
-            <option value="ALL">全部單元 (442)</option>
+            <option value="ALL">全部單元 (882)</option>
             <option value="U3">Unit 3 (226)</option>
             <option value="U4">Unit 4 (208)</option>
             <option value="Review2">Review 2 (8)</option>
+            <option value="KH_01">康軒英語 01 (209)</option>
+            <option value="KH_02">康軒英語 02 (231)</option>
           </select>
         </div>
         <div class="filter-group">
@@ -423,6 +442,7 @@
             <option value="對話與完成句子">對話與完成句子</option>
             <option value="克漏字測驗">克漏字測驗</option>
             <option value="文意字彙">文意字彙</option>
+            <option value="句子重組">句子重組</option>
           </select>
         </div>
         <div class="filter-group">
